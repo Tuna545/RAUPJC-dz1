@@ -1,0 +1,114 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace RAUPJC_dz1._2
+{
+    class GenericList<X> : IGenericList<X>
+    {
+        private X[] _internalStorage;
+        private int currentLenght = 0;
+
+        public GenericList()
+        {
+            _internalStorage = new X[4];
+        }
+
+        public GenericList(int initialSize)
+        {
+            if (initialSize > 0)
+            {
+                _internalStorage = new X[initialSize];
+            }
+            else
+            {
+                Console.WriteLine("Please provide a value greater than zero");
+                System.Environment.Exit(1);
+            }
+
+        }
+
+
+        public int Count
+        {
+            get
+            {
+                return currentLenght;
+            }
+        }
+
+        public void Add(X item)
+        {
+            if (_internalStorage.Length == currentLenght)
+            {
+                X[] temp = _internalStorage;
+                _internalStorage = new X[2 * currentLenght];
+                for (int i = 0; i < currentLenght; i++)
+                    _internalStorage[i] = temp[i];
+            }
+            for (int i = 0; i < _internalStorage.Length; i++)
+            {
+                if (EqualityComparer<X>.Default.Equals(_internalStorage[i], default(X)))   //?  _internalStorage[i].Equals(default(X)
+                {
+                    _internalStorage[i]=item;
+                    currentLenght++;
+                    return;
+                }
+            }
+        }
+
+        public void Clear()
+        {
+            _internalStorage = new X[_internalStorage.Length];
+            currentLenght = 0;
+        }
+
+        public bool Contains(X item)
+        {
+            for (int i = 0; i < _internalStorage.Length; i++)
+            {
+                if (_internalStorage[i].Equals(item)) return true;
+            }
+            return false;
+        }
+
+        public X GetElement(int index)
+        {
+            if (index < currentLenght && index >= 0)
+                return _internalStorage[index];
+            else
+            {
+                throw new IndexOutOfRangeException("index is out of range");  //bačen exeption
+            }
+        }
+
+        public int IndexOf(X item)
+        {
+            for (int i = 0; i < currentLenght; i++)
+            {
+                if (_internalStorage[i].Equals(item)) return i;
+            }
+            return -1;
+        }
+
+        public bool Remove(X item)
+        {
+            int index = IndexOf(item);
+            return RemoveAt(index);
+        }
+
+        public bool RemoveAt(int index)
+        {
+            if (index < currentLenght && index >= 0)
+            {
+                currentLenght--;
+                for (int i = index; i < _internalStorage.Length - 1; i++)
+                    _internalStorage[i] = _internalStorage[i + 1];
+                return true;
+            }
+            else return false;
+        }      
+    }
+}
